@@ -24,6 +24,7 @@ await connectCloudinary();
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
+    'https://frant-end-fatima.vercel.app'
 ];
 
 app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebhooks)
