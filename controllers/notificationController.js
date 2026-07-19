@@ -7,12 +7,17 @@ export const getNotifications = async (req, res) => {
     try {
         const userId = req.userId;
 
-        const notifications = await Notification.find({
+        const query = {
             $or: [
-                { recipientType: 'all' },
-                { recipientIds: userId }
+                { recipientType: 'all' }
             ]
-        }).sort({ createdAt: -1 });
+        };
+
+        if (userId) {
+            query.$or.push({ recipientIds: userId });
+        }
+
+        const notifications = await Notification.find(query).sort({ createdAt: -1 });
 
         return res.json({ success: true, notifications });
     } catch (error) {
@@ -26,6 +31,10 @@ export const markAsRead = async (req, res) => {
     try {
         const userId = req.userId;
         const { id } = req.params;
+
+        if (!userId) {
+            return res.json({ success: false, message: "Please login to mark notifications as read" });
+        }
 
         const notification = await Notification.findByIdAndUpdate(
             id,
